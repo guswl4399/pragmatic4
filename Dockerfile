@@ -2,17 +2,18 @@ FROM python:3.9.0
 
 WORKDIR /home/
 
-RUN git clone https://github.com/guswl4399/pragmatic.git
+RUN echo "test"
 
-WORKDIR /home/pragmatic/
+RUN git clone https://github.com/guswl4399/pragmatic4.git
 
-RUN pip install -r requirements.txt
+WORKDIR /home/pragmatic4/
 
-RUN echo "SECRET_KEY=django-insecure-l_2_%suou4771r+q@v*)38l(n!ih+r#=1qldp936mf%^18o^pw" > .env
+RUN pip install -r requirements3.txt
 
-RUN python manage.py migrate
+RUN pip install gunicorn
+
+RUN pip install mysqlclient
 
 EXPOSE 8000
 
-CMD ["python","manage.py","runserver","0.0.0.0:8000"]
-
+CMD ["bash", "-c", "python manage.py collectstatic --noinput --settings=pragmatic.settings.deploy && python manage.py migrate --settings=pragmatic.settings.deploy && gunicorn pragmatic.wsgi --env DJANGO_SETTINGS_MODULE=pragmatic.settings.deploy  --bind 0.0.0.0:8000"]
